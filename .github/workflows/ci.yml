@@ -1,0 +1,30 @@
+name: Python App
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+   contents: read
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-leatest,windows-leatest]
+        python-version: [3.8,3.9,3.10,3.11]
+    steps:
+    - name : Checkour Code
+      uses: actions/checkout@v3
+    - name: setup python {{matrix.python-version}}
+      uses: actions/setup-python@v3
+      with: 
+        python-version: ${{matrix.python-version}}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirments.txt
+        pip install fake8 pytest tox tox-gh-actions
+    - name: Test with tox
+      run: tox
+    
